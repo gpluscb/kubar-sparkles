@@ -30,13 +30,14 @@ where
 
 impl<TService, TLayer> Service<Interaction> for InteractionRouterService<TService, TLayer>
 where
-    TService: Service<Interaction> + Clone + 'static,
-    TService::Response: 'static,
-    TService::Error: 'static,
+    TService: Service<Interaction> + Clone + Send + 'static,
+    TService::Response: Send + 'static,
+    TService::Error: Send + 'static,
+    TService::Future: Send,
 {
     type Response = Option<TService::Response>;
     type Error = TService::Error;
-    type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>>>>;
+    type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send>>;
 
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
         self.routes

@@ -22,9 +22,10 @@ impl<State, TLayer, TService, BeforeStateLayer> Service<Interaction>
     for CommandRouterService<State, TLayer, TService, BeforeStateLayer>
 where
     State: Clone + 'static,
-    TService: Service<Interaction> + Clone + 'static,
-    TService::Response: 'static,
-    TService::Error: 'static,
+    TService: Service<Interaction> + Clone + Send + 'static,
+    TService::Response: Send + 'static,
+    TService::Error: Send + 'static,
+    TService::Future: Send,
 {
     type Response = Option<TService::Response>;
     type Error = TService::Error;
