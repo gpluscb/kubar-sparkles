@@ -132,6 +132,25 @@ impl<State, TLayer, TService, BeforeStateLayer>
 
         self.inner.mut_route(id, layered)
     }
+
+    pub fn layer<NewBeforeStateLayer>(
+        self,
+        new_layer: NewBeforeStateLayer,
+    ) -> CommandRouterService<
+        State,
+        TLayer,
+        NewBeforeStateLayer::Service,
+        (NewBeforeStateLayer, BeforeStateLayer),
+    >
+    where
+        NewBeforeStateLayer: Layer<TService>,
+    {
+        CommandRouterService {
+            state: self.state,
+            layer: self.layer,
+            inner: self.inner.layer(new_layer),
+        }
+    }
 }
 
 #[cfg(test)]
