@@ -134,6 +134,7 @@ impl<State, TLayer, TService, BeforeStateLayer>
         self.inner.mut_route(id, layered)
     }
 
+    #[must_use]
     pub fn layer<NewBeforeStateLayer>(
         self,
         new_layer: NewBeforeStateLayer,
